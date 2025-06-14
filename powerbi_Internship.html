@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Power BI Internship Roadmap</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chosen Palette: Calm Neutrals -->
+    <!-- Application Structure Plan: A single-page, vertical timeline design was chosen to represent the chronological flow of the internship program. This structure is intuitive for users to follow, mimicking a natural top-to-bottom reading path. A sticky top navigation bar allows for quick jumps between sections, enhancing usability. The content is broken down into thematic sections (Project Lifecycle, Data Architecture, Time Allocation, Weekly Breakdown) and then into cards for each week's tasks and tools. This modular approach makes the dense information from the report highly scannable and digestible, which is ideal for the student audience. It avoids overwhelming them with a wall of text and guides them through the process step-by-step. -->
+    <!-- Visualization & Content Choices: 
+        1. Report Info: Overall 5-phase project structure. -> Goal: Organize/Inform. -> Viz/Presentation: HTML/CSS Flexbox-based flowchart. -> Interaction: None, purely informational. -> Justification: Provides a high-level, "at-a-glance" overview of the entire process before the user dives into weekly details. It sets the context for the whole program. -> Library/Method: HTML/Tailwind CSS.
+        2. Report Info: Data architecture flow. -> Goal: Inform/Visualize process. -> Viz/Presentation: HTML/CSS Flexbox diagram with boxes and arrows. -> Interaction: None, purely informational. -> Justification: Visually represents the conceptual flow of data from raw sources to the final report, helping interns understand the interconnectedness of different project stages. -> Library/Method: HTML/Tailwind CSS.
+        3. Report Info: Duration of each phase (1-2 weeks). -> Goal: Compare/Inform. -> Viz/Presentation: Chart.js Doughnut Chart. -> Interaction: Hover to see tooltips with precise week counts. -> Justification: Visually represents the time commitment for each phase, allowing interns to quickly understand the distribution of work over the program's duration. -> Library/Method: Chart.js (Canvas).
+        4. Report Info: Weekly tasks, objectives, and tools. -> Goal: Organize/Inform. -> Viz/Presentation: Vertical timeline with distinct cards for each week. Lists of tools are presented as styled tags. -> Interaction: Navigation links for smooth scrolling. -> Justification: This is the core of the application, translating the linear report into an engaging, scrollable journey. The card layout separates concerns (objectives, tasks, tools) for clarity, and tags make the tool lists more visually appealing and scannable than simple bullet points. -> Library/Method: HTML/Tailwind CSS, with JS for navigation.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7f4;
+            color: #404040;
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #0d9488;
+            border-bottom-color: #0d9488;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 2rem;
+            left: -1.05rem;
+            bottom: -2rem;
+            width: 2px;
+            background-color: #cbd5e1;
+            transform: translateX(-50%);
+        }
+        .timeline-item:last-child::before {
+            display: none;
+        }
+        .timeline-dot {
+            position: absolute;
+            top: 1.5rem;
+            left: -1rem;
+            transform: translateX(-50%);
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 9999px;
+            background-color: #f8f7f4;
+            border: 3px solid #0d9488;
+            z-index: 10;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        .architecture-node {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            min-width: 120px;
+            height: 80px;
+            flex-shrink: 0;
+            flex-grow: 1;
+            font-weight: 600;
+            color: #374151;
+            border: 1px solid #e5e7eb;
+        }
+        .architecture-arrow {
+            font-size: 2rem;
+            color: #9ca3af;
+            margin: 0 1rem;
+            transform: rotate(90deg); /* For vertical flow on small screens */
+            transition: transform 0.3s ease;
+        }
+        @media (min-width: 768px) {
+            .architecture-arrow {
+                transform: rotate(0deg); /* Horizontal flow on larger screens */
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 lg:px-6">
+            <div class="flex items-center justify-between h-16">
+                <h1 class="text-xl md:text-2xl font-bold text-teal-700">Power BI Internship</h1>
+                <div class="hidden md:flex items-center space-x-4 lg:space-x-6">
+                    <a href="#lifecycle" class="nav-link font-medium text-gray-600 pb-1">Lifecycle</a>
+                    <a href="#architecture" class="nav-link font-medium text-gray-600 pb-1">Architecture</a>
+                    <a href="#timeline" class="nav-link font-medium text-gray-600 pb-1">Roadmap</a>
+                    <a href="#tools" class="nav-link font-medium text-gray-600 pb-1">Tools</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto p-4 md:p-8">
+        
+        <!-- Introduction -->
+        <section class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4 text-gray-800">End-to-End Project Roadmap</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600">
+                This interactive guide outlines a 1-2 month Power BI internship program. It's designed to take you through the entire lifecycle of a business intelligence project, from initial concept to a fully functional interactive dashboard.
+            </p>
+        </section>
+
+        <!-- Project Lifecycle Flowchart -->
+        <section id="lifecycle" class="mb-20">
+            <h3 class="text-2xl font-bold text-center mb-4 text-gray-800">Project Lifecycle Overview</h3>
+            <p class="text-center text-gray-600 max-w-2xl mx-auto mb-10">
+                Before diving into the weekly details, it's important to understand the high-level phases of the project. Each phase builds upon the last, culminating in a comprehensive Power BI solution.
+            </p>
+            <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-2">
+                <div class="flex items-center">
+                    <div class="bg-white p-3 rounded-lg shadow text-center w-40 h-24 flex items-center justify-center border-l-4 border-teal-600"><span class="font-semibold">1. Identification</span></div>
+                    <span class="text-2xl text-gray-400 mx-2 font-light hidden md:block">&rarr;</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="bg-white p-3 rounded-lg shadow text-center w-40 h-24 flex items-center justify-center border-l-4 border-sky-600"><span class="font-semibold">2. Ingestion & Storage</span></div>
+                    <span class="text-2xl text-gray-400 mx-2 font-light hidden md:block">&rarr;</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="bg-white p-3 rounded-lg shadow text-center w-40 h-24 flex items-center justify-center border-l-4 border-indigo-600"><span class="font-semibold">3. Modeling</span></div>
+                    <span class="text-2xl text-gray-400 mx-2 font-light hidden md:block">&rarr;</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="bg-white p-3 rounded-lg shadow text-center w-40 h-24 flex items-center justify-center border-l-4 border-purple-600"><span class="font-semibold">4. Reporting</span></div>
+                    <span class="text-2xl text-gray-400 mx-2 font-light hidden md:block">&rarr;</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="bg-white p-3 rounded-lg shadow text-center w-40 h-24 flex items-center justify-center border-l-4 border-slate-600"><span class="font-semibold">5. Finalize</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Architecture Diagram -->
+        <section id="architecture" class="mb-20">
+            <h3 class="text-2xl font-bold text-center mb-4 text-gray-800">Conceptual Data Architecture</h3>
+            <p class="text-center text-gray-600 max-w-2xl mx-auto mb-10">
+                This diagram illustrates the typical flow of data in a Power BI project, from raw sources through various processing stages to the final interactive reports. Understanding this architecture is crucial for building robust BI solutions.
+            </p>
+            <div class="flex flex-col md:flex-row items-center justify-center flex-wrap">
+                <div class="architecture-node">Data Sources <br>(Kaggle, APIs)</div>
+                <div class="architecture-arrow">↓</div>
+                <div class="architecture-node">Data Ingestion</div>
+                <div class="architecture-arrow">↓</div>
+                <div class="architecture-node">Data Storage <br>(Cloud DB/Lake)</div>
+                <div class="architecture-arrow">↓</div>
+                <div class="architecture-node">Data Transformation <br>(SQL, Power Query)</div>
+                <div class="architecture-arrow">↓</div>
+                <div class="architecture-node">Data Model <br>(Fact & Dimension Tables)</div>
+                <div class="architecture-arrow">↓</div>
+                <div class="architecture-node">Power BI Desktop <br>& Service</div>
+            </div>
+        </section>
+
+        <!-- Time Allocation & Tools Overview -->
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-12 mb-20 items-center">
+            <div class="lg:col-span-2">
+                 <h3 class="text-2xl font-bold text-center mb-4 text-gray-800">Phase Time Allocation</h3>
+                 <p class="text-center text-gray-600 max-w-2xl mx-auto mb-6">
+                    The program is structured over approximately 6 weeks. This chart shows the estimated time dedicated to each major phase of the project lifecycle, with reporting being the most intensive part.
+                </p>
+                <div class="chart-container">
+                    <canvas id="timeAllocationChart"></canvas>
+                </div>
+            </div>
+            <div id="tools" class="lg:col-span-3 bg-white p-8 rounded-xl shadow-lg">
+                <h3 class="text-2xl font-bold mb-6 text-gray-800">Core Technologies & Tools</h3>
+                <p class="text-gray-600 mb-6">
+                    Throughout the internship, you'll gain hands-on experience with a variety of industry-standard tools for data acquisition, storage, transformation, and visualization. Here's a summary of the key technologies you'll be using.
+                </p>
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-semibold text-lg mb-2 text-teal-700">BI & Reporting</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-teal-100 text-teal-800 text-sm font-medium px-3 py-1 rounded-full">Power BI Desktop</span>
+                            <span class="bg-teal-100 text-teal-800 text-sm font-medium px-3 py-1 rounded-full">Power BI Service</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-lg mb-2 text-sky-700">Data Storage & DB Management</h4>
+                        <div class="flex flex-wrap gap-2">
+                             <span class="bg-sky-100 text-sky-800 text-sm font-medium px-3 py-1 rounded-full">Microsoft Azure</span>
+                             <span class="bg-sky-100 text-sky-800 text-sm font-medium px-3 py-1 rounded-full">AWS</span>
+                             <span class="bg-sky-100 text-sky-800 text-sm font-medium px-3 py-1 rounded-full">GCP</span>
+                             <span class="bg-sky-100 text-sky-800 text-sm font-medium px-3 py-1 rounded-full">SQL Server</span>
+                             <span class="bg-sky-100 text-sky-800 text-sm font-medium px-3 py-1 rounded-full">PostgreSQL</span>
+                             <span class="bg-sky-100 text-sky-800 text-sm font-medium px-3 py-1 rounded-full">Azure Data Studio</span>
+                             <span class="bg-sky-100 text-sky-800 text-sm font-medium px-3 py-1 rounded-full">DBeaver</span>
+                        </div>
+                    </div>
+                     <div>
+                        <h4 class="font-semibold text-lg mb-2 text-indigo-700">Transformation & Modeling</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">SQL</span>
+                            <span class="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">Power Query (M)</span>
+                            <span class="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">Python (Pandas)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weekly Timeline -->
+        <section id="timeline" class="relative">
+             <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Weekly Internship Roadmap</h2>
+            <div class="space-y-12">
+
+                <!-- Week 1 -->
+                <article class="timeline-item relative pl-10 md:pl-16">
+                    <div class="timeline-dot"></div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                        <h3 class="text-2xl font-bold mb-3 text-teal-700">Week 1: Project & Data Identification</h3>
+                        <p class="font-semibold text-gray-700 mb-4">Objective: Define the project scope, select an industry, identify business questions, and acquire initial raw data.</p>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-bold mb-2">Key Tasks:</h4>
+                                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                    <li>Brainstorm and select an industry for analysis.</li>
+                                    <li>Define 2-3 key business questions to answer.</li>
+                                    <li>Explore public data sources and acquire 2-4 raw datasets.</li>
+                                    <li>Perform initial data profiling to understand structure and quality.</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-2">Recommended Data Sources:</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">Kaggle</span>
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">Data.gov</span>
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">UCI Repo</span>
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">World Bank</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Week 2 -->
+                <article class="timeline-item relative pl-10 md:pl-16">
+                    <div class="timeline-dot"></div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                        <h3 class="text-2xl font-bold mb-3 text-sky-700">Week 2: Data Storage & Infrastructure</h3>
+                        <p class="font-semibold text-gray-700 mb-4">Objective: Select and set up a suitable data storage solution using free trial options, and ingest the raw data.</p>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-bold mb-2">Key Tasks:</h4>
+                                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                    <li>Evaluate and select a cloud or local database solution.</li>
+                                    <li>Set up accounts and required services (e.g., database, storage).</li>
+                                    <li>Load raw datasets into the chosen data source.</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-2">Free Trial Platforms:</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">Azure SQL DB</span>
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">AWS RDS</span>
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">GCP BigQuery</span>
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">SQL Server Dev</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Week 3 -->
+                <article class="timeline-item relative pl-10 md:pl-16">
+                    <div class="timeline-dot"></div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                        <h3 class="text-2xl font-bold mb-3 text-indigo-700">Week 3: Data Transformation & Modeling</h3>
+                        <p class="font-semibold text-gray-700 mb-4">Objective: Clean, transform, and structure the raw data into a star schema suitable for analytical reporting.</p>
+                        <div class="grid md:grid-cols-2 gap-6">
+                             <div>
+                                <h4 class="font-bold mb-2">Key Tasks:</h4>
+                                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                    <li>Clean data: handle missing values, duplicates, and errors.</li>
+                                    <li>Transform data: create calculated columns, filter, and aggregate.</li>
+                                    <li>Design a star schema with fact and dimension tables.</li>
+                                    <li>Implement the data model in your chosen data source using SQL or other tools.</li>
+                                </ul>
+                            </div>
+                             <div>
+                                <h4 class="font-bold mb-2">Core Skills:</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">Data Cleaning</span>
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">ETL Processes</span>
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">Dimensional Modeling</span>
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">SQL Scripting</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Week 4-5 -->
+                <article class="timeline-item relative pl-10 md:pl-16">
+                    <div class="timeline-dot"></div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                        <h3 class="text-2xl font-bold mb-3 text-purple-700">Weeks 4-5: Power BI Report Building</h3>
+                        <p class="font-semibold text-gray-700 mb-4">Objective: Connect Power BI to the prepared data source, create the data model, and build an interactive, insightful report.</p>
+                         <div class="grid md:grid-cols-2 gap-6">
+                             <div>
+                                <h4 class="font-bold mb-2">Key Tasks:</h4>
+                                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                    <li>Connect Power BI to the data source and load tables.</li>
+                                    <li>Define relationships in the Power BI data model.</li>
+                                    <li>Write DAX measures to calculate KPIs.</li>
+                                    <li>Design and build multiple interactive report pages.</li>
+                                    <li>Implement slicers, filters, and drill-throughs for exploration.</li>
+                                    <li>Focus on clear storytelling through visuals.</li>
+                                </ul>
+                            </div>
+                             <div>
+                                <h4 class="font-bold mb-2">Focus Areas:</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">DAX</span>
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">Data Visualization</span>
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">UI/UX Design</span>
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">Dashboard Interactivity</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- Week 6 -->
+                <article class="timeline-item relative pl-10 md:pl-16">
+                    <div class="timeline-dot"></div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                        <h3 class="text-2xl font-bold mb-3 text-slate-700">Week 6: Finalize & Document</h3>
+                        <p class="font-semibold text-gray-700 mb-4">Objective: Refine the report, prepare project documentation, present findings, and explore advanced concepts.</p>
+                         <div class="grid md:grid-cols-2 gap-6">
+                             <div>
+                                <h4 class="font-bold mb-2">Key Tasks:</h4>
+                                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                    <li>Review and refine the report based on feedback.</li>
+                                    <li>Create comprehensive project documentation.</li>
+                                    <li>Prepare and (optionally) deliver a final presentation.</li>
+                                    <li>Explore advanced topics like RLS and Power BI Service.</li>
+                                </ul>
+                            </div>
+                             <div>
+                                <h4 class="font-bold mb-2">Advanced Topics:</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">Row-Level Security</span>
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">Power BI Service</span>
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">Data Refresh</span>
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">Custom Visuals</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+    </main>
+    
+    <footer class="bg-white mt-20 border-t">
+        <div class="container mx-auto py-6 px-4 text-center text-gray-500">
+            <p>&copy; 2024 Interactive Internship Program. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            // Chart.js: Time Allocation Doughnut Chart
+            const ctx = document.getElementById('timeAllocationChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Identification (Wk 1)', 'Storage (Wk 2)', 'Modeling (Wk 3)', 'Reporting (Wk 4-5)', 'Finalize (Wk 6)'],
+                    datasets: [{
+                        label: 'Weeks Allocated',
+                        data: [1, 1, 1, 2, 1],
+                        backgroundColor: [
+                            '#14b8a6', // Teal
+                            '#38bdf8', // Sky
+                            '#818cf8', // Indigo
+                            '#c084fc', // Purple
+                            '#64748b'  // Slate
+                        ],
+                        borderColor: '#f8f7f4',
+                        borderWidth: 4,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    family: "'Inter', sans-serif"
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed === 1 ? '1 Week' : context.parsed + ' Weeks';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Smooth scrolling for navigation links
+            const navLinks = document.querySelectorAll('a[href^="#"]');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    let targetId = this.getAttribute('href');
+                    let targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Active nav link highlighting on scroll
+            const sections = document.querySelectorAll('section[id]');
+            const allNavLinks = document.querySelectorAll('header nav a');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        allNavLinks.forEach(link => {
+                            link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);
+                        });
+                    }
+                });
+            }, { rootMargin: "-50% 0px -50% 0px" });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+        });
+    </script>
+
+</body>
+</html>
